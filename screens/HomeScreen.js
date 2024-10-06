@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet,TouchableOpacity } from 'react-native';
+import { StackNavigator } from '../StackNavigator';
 
 const HomeScreen = ({ navigation, handleLogout }) => {
   return (
+    
     <View style={styles.authContainer}>
-
+     
       <Text style={styles.title}>Ku music</Text>
-
+      
       <View style={styles.buttonContainer}>
       <TouchableOpacity
         style={styles.bookingButton}

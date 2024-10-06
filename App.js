@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { initializeApp } from '@firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from '@firebase/auth';
-import HomeScreen from './screens/HomeScreen'; // Adjust the path if needed
-import BookingScreen from './screens/BookingScreen'; // Adjust the path if needed
-import BorrowScreen from './screens/BorrowScreen';
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Entypo from "@expo/vector-icons/Entypo";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
+import HomeScreen from './screens/HomeScreen';
+import BookingScreen from './screens/BookingScreen';
+import BorrowScreen from './screens/BorrowScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import NontiScreen from './screens/NontiScreen';
+
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCbMY99C-WlWulAhEfp2nN2VzYo2L-5Tmc",
   authDomain: "reactna-bdde6.firebaseapp.com",
@@ -17,6 +25,7 @@ const firebaseConfig = {
   appId: "1:575880627115:web:09b1d41b24b80a1ccf48ee"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 const AuthScreen = ({ email, setEmail, password, setPassword, isLogin, setIsLogin, handleAuthentication }) => {
@@ -46,10 +55,62 @@ const AuthScreen = ({ email, setEmail, password, setPassword, isLogin, setIsLogi
       </Text>
     </View>
   );
-}
+};
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
+// Define BottomTabs for Home, Booking, Profile
+const BottomTabs = () => {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: "Home",
+          headerShown: false,
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <Entypo name="home" size={24} color="black" />
+            ) : (
+              <AntDesign name="home" size={24} color="black" />
+            ),
+        }}
+      />
+      <Tab.Screen
+        name="Nonti"
+        component={NontiScreen}
+        options={{
+          tabBarLabel: "Nonti",
+          headerShown: false,
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <Ionicons name="notifications-sharp" size={24} color="black" />
+            ) : (
+              <Ionicons name="notifications-outline" size={24} color="black" />
+            ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: "Profile",
+          headerShown: false,
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <Ionicons name="person" size={24} color="black" />
+            ) : (
+              <Ionicons name="person-outline" size={24} color="black" />
+            ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+// Main App Component
 export default App = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,11 +118,11 @@ export default App = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   const auth = getAuth(app);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
-
     return () => unsubscribe();
   }, [auth]);
 
@@ -93,7 +154,9 @@ export default App = () => {
     <NavigationContainer>
       <Stack.Navigator>
         {user ? (
+          // Show BottomTabs when user is logged in
           <>
+            <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
             <Stack.Screen name="Home">
               {(props) => <HomeScreen {...props} handleLogout={handleLogout} />}
             </Stack.Screen>
@@ -101,6 +164,7 @@ export default App = () => {
             <Stack.Screen name="Borrow" component={BorrowScreen} />
           </>
         ) : (
+          // Show AuthScreen when user is not logged in
           <Stack.Screen name="Auth">
             {(props) => (
               <AuthScreen
@@ -119,7 +183,10 @@ export default App = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+  
+};
+
+
 
 const styles = StyleSheet.create({
   authContainer: {
@@ -155,4 +222,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-

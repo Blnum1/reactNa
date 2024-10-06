@@ -21,6 +21,7 @@ const firebaseConfig = {
   authDomain: "reactna-bdde6.firebaseapp.com",
   projectId: "reactna-bdde6",
   storageBucket: "reactna-bdde6.appspot.com",
+  databaseURL: "https://reactna-bdde6-default-rtdb.asia-southeast1.firebasedatabase.app",
   messagingSenderId: "575880627115",
   appId: "1:575880627115:web:09b1d41b24b80a1ccf48ee"
 };

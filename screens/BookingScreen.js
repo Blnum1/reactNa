@@ -1,17 +1,60 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+// BookingScreen.js
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { createBooking } from '../fisebaseApi';
 
 const BookingScreen = () => {
+  const [selectedSlot, setSelectedSlot] = useState(null);
+
+  const slots = [
+    '10:00 AM - 12:00 PM',
+    '12:00 PM - 2:00 PM',
+    '2:00 PM - 4:00 PM',
+    '4:00 PM - 6:00 PM',
+    '6:00 PM - 8:00 PM',
+    '8:00 PM - 10:00 PM',
+  ];
+
+  const handleBooking = (slot) => {
+    setSelectedSlot(slot);
+  };
+
+  const confirmBooking = async () => {
+    if (!selectedSlot) {
+      Alert.alert('Error', 'Please select a time slot.');
+      return;
+    }
+
+    try {
+      const result = await createBooking(selectedSlot); // Call the API function
+      Alert.alert('Success', result.message);
+      setSelectedSlot(null); // Reset the selected slot
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
   return (
-    <View style={styles.authContainer}>
-      <Text style={styles.title}>Music Rehearsal Room Booking</Text>
-      {/* Booking system will go here */}
+    <View style={styles.container}>
+      <Text style={styles.title}>Select a Room Booking Slot</Text>
+      {slots.map((slot) => (
+        <TouchableOpacity
+          key={slot}
+          style={[styles.slotButton, selectedSlot === slot && styles.selectedSlot]}
+          onPress={() => handleBooking(slot)}
+        >
+          <Text style={styles.slotText}>{slot}</Text>
+        </TouchableOpacity>
+      ))}
+      <TouchableOpacity style={styles.confirmButton} onPress={confirmBooking}>
+        <Text style={styles.confirmText}>Confirm Booking</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  authContainer: {
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -23,6 +66,33 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  slotButton: {
+    width: '100%',
+    padding: 16,
+    backgroundColor: '#3498db',
+    borderRadius: 4,
+    marginVertical: 8,
+    alignItems: 'center',
+  },
+  selectedSlot: {
+    backgroundColor: '#2980b9',
+  },
+  slotText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  confirmButton: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: '#2ecc71',
+    borderRadius: 4,
+    width: '100%',
+    alignItems: 'center',
+  },
+  confirmText: {
+    color: '#fff',
+    fontSize: 18,
   },
 });
 
